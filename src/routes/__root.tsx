@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -77,11 +78,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "HireMe — Job Application Tracker" },
+      {
+        name: "description",
+        content:
+          "HireMe is a clean job application tracker for statuses, reminders, documents and analytics.",
+      },
+      { name: "author", content: "HireMe" },
+      { property: "og:title", content: "HireMe — Job Application Tracker" },
+      {
+        property: "og:description",
+        content: "Track applications, interviews, offers and reminders in one minimal tracker.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
@@ -119,8 +127,51 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <div className="min-h-screen bg-background">
+        <SiteHeader />
+        <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+        </main>
+      </div>
+      <Toaster position="top-center" />
     </QueryClientProvider>
+  );
+}
+
+const navLinks = [
+  { to: "/", label: "Dashboard" },
+  { to: "/applications", label: "Applications" },
+  { to: "/analytics", label: "Analytics" },
+] as const;
+
+function SiteHeader() {
+  return (
+    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <Link to="/" className="flex items-center gap-2">
+          <span
+            className="inline-flex size-8 items-center justify-center rounded-lg text-sm font-bold text-primary-foreground"
+            style={{ backgroundImage: "var(--gradient-primary)" }}
+          >
+            H
+          </span>
+          <span className="text-lg font-semibold tracking-tight">HireMe</span>
+        </Link>
+        <nav className="flex items-center gap-1 overflow-x-auto text-sm">
+          {navLinks.map((l) => (
+            <Link
+              key={l.to}
+              to={l.to}
+              activeOptions={{ exact: l.to === "/" }}
+              className="rounded-md px-3 py-1.5 font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              activeProps={{ className: "bg-secondary text-foreground" }}
+            >
+              {l.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
+    </header>
   );
 }
